@@ -1,0 +1,394 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Webmuses@Medius - Introduction to Test Driven Development in JavaScript</title>
+
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+
+    <script src="lib/js/head.min.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <style type="text/css">
+      aside.notes {
+        font-size: 8pt;
+      }
+
+      blockquote.wide {
+        width: 100%;
+      }
+
+      footer.source {
+        font-size: 12pt;
+        margin-top: -20px;
+      }
+
+      blockquote.smaller {
+        font-size: 18pt !important;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="js/reveal.min.js"></script>
+
+    <div class="reveal">
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+
+        <section>
+          <h1>JavaScript & TDD</h1>
+          <h3>
+            <a href="http://webmus.es">Webmuses</a>@<a href="http://www.medius-group.com">Medius</a>
+          </h3>
+
+          <small>
+            Created by <a href="mailto://maciej.makowski@medius-group.pl">Maciej Makowski</a> / <a href="https://github.com/cfiet">cfiet @ github</a>
+          </small>
+        </section>
+
+        <section>
+          <h2>Agenda</h2>
+          <ul>
+            <li class="fragment">Czym jest TDD?</li>
+            <li class="fragment">Wprowadzenie do narzędzi</li>
+            <li class="fragment">Warsztaty</li>
+          </ul>
+        </section>
+
+        <section>
+          <section>
+            <h3>Czym jest Test Driven Development</h3>
+            <blockquote class="wide smaller">
+              <p>
+                Test-driven development (...) polega na wielokrotnym powtarzaniu kilku kroków:
+                <ol>
+                  <li>Najpierw programista pisze automatyczny test sprawdzający dodawaną funkcjonalność. Test w tym momencie nie powinien się udać.</li>
+                  <li>Później następuje implementacja funkcjonalności. W tym momencie wcześniej napisany test powinien się udać.</li>
+                  <li>W ostatnim kroku, programista dokonuje refaktoryzacji napisanego kodu, żeby spełniał on oczekiwane standardy.</li>
+                </ol>
+              </p>
+              <footer>
+                <cite>
+                  <a href="http://en.wikipedia.org/wiki/Test-driven_development">Wikipedia</a>
+                </cite>
+              </footer>
+            </blockquote>
+          </section>
+
+          <section>
+            <h3>W skrócie</h3>
+            <ol>
+              <li class="fragment">Test</li>
+              <li class="fragment">Implementacja</li>
+              <li class="fragment">Refactor</li>
+            </ol>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Czas na przykład!</h3>
+            <h4>Fizz buzz!</h4>
+            <div>
+              <p class="fragment">Funkcja która przyjmuje liczbę i zwraca</p>
+              <ul>
+                <li class="fragment"><em>Fizz</em> dla liczb podzielnych przez 3</li>
+                <li class="fragment"><em>Buzz</em> dla liczb podzielnych przez 5</li>
+                <li class="fragment"><em>FizzBuzz</em> dla liczb podzielnych przez 3 i 5</li>
+                <li class="fragment">W pozostałych przypadkach, podaną liczbę</li>
+              </ul>
+              <p class="fragment">Funkcja powinna dzialac dla liczb z zakresu 1 do 100.</p>
+            </div>
+          </section>
+
+          <section>
+            <h3>Jescze raz i TDD</h3>
+            <ol>
+              <li class="fragment">Najpierw test</li>
+              <li class="fragment">Potem implementacja</li>
+              <li class="fragment">Na koniec, refaktor</li>
+            </ol>
+            <div class="fragment">
+              <img src="img/to-the-adventure.jpg" alt="To the adventure, Charli!" />
+              <h4>To the adventure!</h4>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>FizzBuzz</h3>
+            <h4>Krok 1 - napisz test</h4>
+            <pre><code class="javascript" data-trim contenteditable>
+describe("FizzBuzz", function () {
+  describe("zwraca 'Fizz' dla liczb podzielnych przez 3", function () {
+    it("działa dla 3", function () {
+      expect(fizzbuzz(3)).toBeEqual("Fizz");
+    });
+
+    it("działa dla 12", function () {
+      expect(fizzbuzz(12)).toBeEqual("Fizz");
+    });
+  });
+});
+            </code></pre>
+          </section>
+
+          <section>
+            <h3>FizzBuzz</h3>
+            <h4>Krok 2 - uruchom wszystkie testy</h4>
+            <img src="img/fizzbuzz-result1.png" alt="2 failing" />
+          </section>
+
+          <section>
+            <h3>FizzBuzz</h3>
+            <h4>Krok 3 - zaimplementuj funkcjonalność</h4>
+            <pre><code class="javascript" data-trim contenteditable>
+function fizzbuzz(n) {
+  if(n % 3 === 0) {
+    return "Fizz"
+  }
+}
+            </code></pre>
+            <img class="fragment" src="img/fizzbuzz-result2.png" alt="All passed" />
+          </section>
+
+          <section>
+            <h3>FizzBuzz</h3>
+            <h4>Krok 4 - zrefaktoruj kod</h4>
+            <small>Tak testy jak i funkcjonalność</small>
+            <pre><code class="javascript" data-trim contenteditable>
+describe("FizzBuzz", function () {
+  describe("zwraca 'Fizz' dla liczb podzielnych przez 3", function () {
+    var testCases = [
+          3,
+          12,
+          21
+        ],
+        key, value;
+
+    for(key in testCases) {
+      value = testCases[key]
+      it("działa dla " + value, function () {
+        expect(fizzbuzz(value).to.be.equal("Fizz");
+      });
+    }
+  });
+});
+            </code></pre>
+          </section>
+
+          <section>
+            <h3>FizzBuzz</h3>
+            <h4>Krok 5 - zweryfikuj zrefaktorowany kod</h4>
+            <img src="img/fizzbuzz-result3.png" alt="All passed after refactor" />
+          </section>
+
+          <section>
+            <h3>FizzBuzz</h3>
+            <h4>Powtórz poprzednie kroki</h4>
+            <img src="img/rinse-and-repeat.jpg" alt="Rinse and repeat">
+          </section>
+
+          <section>
+            <h3>FizzBuzz</h3>
+            <h4>Końcowy rezultat</h4>
+            <img src="img/fizzbuzz-result-final.png" alt="All passed and feature is completed" />
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h1>Zalety</h1>
+          </section>
+
+          <section>
+            <h3>Natychmiastowy feedback</h3>
+            <img src="img/software-development-costs-bugfixing.png" alt="Bug cost" />
+          </section>
+
+          <section>
+            <h3>Testy jako zbiór wymagań/specyfikacja (BDD)</h3>
+            <img src="img/fizzbuzz-result-final.png" alt="All passed and feature is completed" />
+          </section>
+
+          <section>
+            <h3>Pozostałe zalety TDD</h3>
+            <ul>
+              <li class="fragment">Powtarzalne wyniki</li>
+              <li class="fragment">Umożliwia szybszą identyfikację miejsc, gdzie wystąpił problem</li>
+              <li class="fragment">Wymusza modularną architekturę</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Wady</h3>
+            <ul>
+              <li class="fragment">Wymaga czasu, żeby zacząć</li>
+              <li class="fragment">Dodatkowy kod wymagający utrzymania</li>
+              <li class="fragment">Wydłuża czas przygotowania pierwszej implementacji</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h1>TDD - dobre praktyki</h1>
+            <ul>
+              <li class="fragment">Pojedynczy test powinien testować tylko jedno wymaganie</li>
+              <li class="fragment">Testy nie powinny być zależne pomiędzy sobą</li>
+              <li class="fragment">Testy powinny wykonywać się szybko</li>
+              <li class="fragment">Wyniki powinny być powtarzalne</li>
+              <li class="fragment">Testy powinny być uruchamiane po każdej zmianie</li>
+              <li class="fragment">"Oficjalny" kod powinien przechodzić wszystkie testy</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Narzędzia</h3>
+            <ul>
+              <li class="fragment"><a href="http://pivotal.github.io/jasmine/">Jasmine</a> - biblioteka TDD, pozwala wykonywać testy w przeglądarce</li>
+              <li class="fragment"><a href="http://sinonjs.org/docs/">Sinon</a> - biblioteka do tworzenia <em>mock-ów</em> i <em>stub-ów</em> w celu symulowania zachowań systemu</li>
+              <li class="fragment">
+                <a href="http://chaijs.com/">Chai</a> - czytelniejsze testy i asercje
+                <br />
+                <small>
+                  <code>expect(true).toBeEqual(false)</code> -&gt; <code>expect(true).to.be.equal(false)</code>
+                </small>
+              </li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h1>Warsztaty</h1>
+          </section>
+
+          <section>
+            <h3>Jasmine - API</h3>
+            <pre><code class="javascript" data-trim contenteditable>
+define("{nazwa grupy testów}", function () {
+  define("{nazwa podgrupy testów}", function () {
+    beforeEach(function () {
+      // wywołane przed każdym teście
+    });
+
+    afterEach(function () {
+      // wywołane po każdym teście
+    });
+
+    it("{nazwa testu}", function () {
+      // test
+    });
+  });
+});
+            </code></pre>
+          </section>
+
+          <section>
+            <h3>Jasmine - asercje</h3>
+            <p>
+            expect(<small>{zmienna | operacja}</small>)
+            </p>
+            <ul>
+              <li>.toBeDefined()</li>
+              <li>.toEqual(<small>{wartość}</small>)</li>
+              <li>.toMatch(<small>{regexp}</small>)</li>
+              <li>.toBeNull()</li>
+              <li>.toBeLessThan(<small>{liczba}</small>) / .toBeGreaterThan(<small>{liczba}</small>)</li>
+              <li>.not<br />
+              expect(neverNull()).not.toEqual(null)
+            </ul>
+          </section>
+
+          <section>
+            <h3>Sinon - spies</h3>
+            <pre><code class="javascript" data-trim contenteditable>
+sinon.spy(console, "log");
+callSomethingThatLogs();
+expect(console.log.called).toBeTruthy();
+console.log.restore();
+            </code></pre>
+
+            <ul>
+              <li>spy.called</li>
+              <li>spy.calledOnce</li>
+              <li>spy.calledWith(arg1, arg2, ...)</li>
+              <li>spy.returned(value)</li>
+              <li>spy1.calledBefore(spy2)</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Sinon - stubs</h3>
+            <pre><code class="javascript" data-trim contenteditable>
+var ajaxStub = sinon.stub(jQuery, "ajax");
+ajaxStub.throws();
+expect(myAjaxCaller()).not.toThrow();
+ajaxStub.restore();
+            </code></pre>
+
+            <ul>
+              <li>stub.returns(value)</li>
+              <li>stub.withArgs(arg1, arg2, ...).returns(value)</li>
+              <li>spy.returned(value)</li>
+            </ul>
+          </section>
+        </section>
+      </div>
+    </div>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+          // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+          // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
